@@ -1,29 +1,77 @@
-% initial height
-h = 5;
+clf
 % gravitational constant
 g = 9.81;
-% v2 = unknown m/s
-v1 = [0, 10];
-syms v2;
+m = 0.01;
+% pancake is 0.01m
+L = 1;
+theta_dd = 0;
+theta_d = 2*pi*L;
+theta = 0;
+Izz = 0.66667*m*L^2;
+x = 1; x_d = 0;
+y = 1; y_d = 2;
 
-m = 1;
-% pancake is 2m long lol
-L = 2;
-% distance from one end of the pancake to the icr
-l = v2*L / (v1 - v2);
-% instanesous angular velocity
-w = v1 / (L + l);
-% Moment of inertia from parallel axis theorem
-I_ic = m*L^2 / 12 + m*(0.5*L + l)^2;
-% Kinectic energy
-K = 0.5*m*((v1 + v2) / 2)^2 + 0.5*I_ic*w^2;
-% Potential energy
-P = m*g*h;
+t_step = 0.01;
+t_max = 1;
+t = linspace(0, t_max, t_max / t_step);
 
-% Evaluate
-v2s = double(solve(K == P));
-ls = v2s.*L ./ (v1 - v2s);
+xx = zeros(1, size(t, 2));
+yy = zeros(1, size(t, 2));
+theta_x = zeros(1, size(t, 2));
+e1x = zeros(1, size(t, 2));
+e1y = zeros(1, size(t, 2));
+e2x = zeros(1, size(t, 2));
+e2y = zeros(1, size(t, 2));
 
-% calculate next location
-x1 = t_step * v1;
+for i = 1:size(t, 2)
+    figure(3)
+    axis equal
+    grid on
 
+    A = [1, 0, L/2*sin(theta);
+         0, 1, -L/2*cos(theta);
+         -m*L/2*sin(theta), m*L/2*cos(theta), Izz - m*L^2/4];
+    
+    b = -[-theta_d^2 * L / 2 * cos(theta);
+          theta_d^2 * L / 2 * sin(theta) + g;
+          -m*g*L/2*sin(theta)];
+    
+    sol = A \ b;
+    theta_dd = sol(3);
+    x_dd = sol(1);
+    y_dd = sol(2);
+    
+    theta_d = theta_d + theta_dd * t_step;
+    theta = theta + theta_d * t_step;
+
+    x_d = x_d + x_dd * t_step;
+    y_d = y_d + y_dd * t_step;
+    x = x + x_d * t_step;
+    y = y + y_d * t_step;
+    
+    xx(i) = x;
+    yy(i) = y;
+    theta_x(i) = theta;
+    
+    e1x(i) = x;
+    e1y(i) = y;    
+    
+    e2x(i) = x + L*cos(theta);
+    e2y(i) = y - L*sin(theta);
+    
+    line([e1x(i); e2x(i)], [e1y(i); e2y(i)])
+    LL = (e2x(i)^2 + e2y(i)^2 - (e1x(i)^2 + e1y(i)^2))^2;
+
+    drawnow 
+end
+
+figure(1)
+subplot(3, 1, 1)
+plot(t, xx);
+subplot(3, 1, 2)
+plot(t, yy);
+subplot(3, 1, 3)
+plot(t, theta_x);
+
+figure(2)
+plot(xx, yy)
