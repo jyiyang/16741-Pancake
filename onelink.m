@@ -1,18 +1,20 @@
-clf
+clear all
 % gravitational constant
 g = 9.81;
 m = 0.01;
 % pancake is 0.01m
 L = 1;
 theta_dd = 0;
-theta_d = 2*pi*L;
+theta_d = 0;
 theta = 0;
-Izz = 0.66667*m*L^2;
-x = 1; x_d = 0;
-y = 1; y_d = 2;
+Izz = 0.666667*m*L^2;
+x = 0; x_d = 0;
+y = 0; y_d = 5;
+% damping factor
+cw = 0.005; cp = 1.12 * ( L / 2)^2 * pi;
 
 t_step = 0.01;
-t_max = 1;
+t_max = 2;
 t = linspace(0, t_max, t_max / t_step);
 
 xx = zeros(1, size(t, 2));
@@ -32,9 +34,9 @@ for i = 1:size(t, 2)
          0, 1, -L/2*cos(theta);
          -m*L/2*sin(theta), m*L/2*cos(theta), Izz - m*L^2/4];
     
-    b = -[-theta_d^2 * L / 2 * cos(theta);
-          theta_d^2 * L / 2 * sin(theta) + g;
-          -m*g*L/2*sin(theta)];
+    b = -[-theta_d^2 * L / 2 * cos(theta) + sign(x_d) * cp * sin(x_d)^2;
+          theta_d^2 * L / 2 * sin(theta) + g + sign(y_d) * cp * cos(y_d)^2;
+          m*g*L/2*cos(theta) + cw * theta_d];
     
     sol = A \ b;
     theta_dd = sol(3);
@@ -49,8 +51,8 @@ for i = 1:size(t, 2)
     x = x + x_d * t_step;
     y = y + y_d * t_step;
     
-    xx(i) = x;
-    yy(i) = y;
+    xx(i) = x + L*cos(theta) /2;
+    yy(i) = y - L*sin(theta) /2;
     theta_x(i) = theta;
     
     e1x(i) = x;
@@ -61,8 +63,9 @@ for i = 1:size(t, 2)
     
     line([e1x(i); e2x(i)], [e1y(i); e2y(i)])
     LL = (e2x(i)^2 + e2y(i)^2 - (e1x(i)^2 + e1y(i)^2))^2;
-
-    drawnow 
+    if mod(i, 10) == 0
+        drawnow 
+    end
 end
 
 figure(1)
