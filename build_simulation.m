@@ -7,7 +7,7 @@ th1 = 0;
 th2 = 0;
 th3 = -pi/4;
 
-tg_vx = -2;
+tg_vx = -1;
 tg_vy = 5;
 tg_w = 2 * pi;
 
@@ -17,6 +17,10 @@ a3 = 1;
 m1 = 1;
 m2 = 1;
 m3 = 1;
+
+pk_l = 0.5;
+pk_m = 0.1;
+m3 = m3 + pk_m;
 
 pass_flag = false;
 
@@ -87,8 +91,8 @@ end
 
 T_rst = -double(subs(T, [aa1, aa2, aa3, mm1, mm2, mm3, th_1, th_2, th_3, th_1_d, th_2_d, th_3_d, th_1_dd, th_2_dd, th_3_dd], [a1, a2, a3, m1, m2, m3, h1, h2, h3, 0, 0, 0, 0, 0, 0]));
 T_array = [T_array; T_rst'];
-atmp = (1 - 0.5) / 2;
-pc_point_array = pancake(a1 * cos(h1) + a2 * cos(h1 + h2) + atmp * cos(h1 + h2 + h3), a1 * sin(h1) + a2 * sin(h1 + h2) + atmp * sin(h1 + h2 + h3), h1 + h2 + h3, tg_vx, tg_vy, -tg_w);
+atmp = (a3 - pk_l) / 2;
+pc_point_array = pancake(a1 * cos(h1) + a2 * cos(h1 + h2) + atmp * cos(h1 + h2 + h3), a1 * sin(h1) + a2 * sin(h1 + h2) + atmp * sin(h1 + h2 + h3), h1 + h2 + h3, tg_vx, tg_vy, -tg_w, pk_l, pk_m);
 
 pass_flag = false;
 offset = 0;

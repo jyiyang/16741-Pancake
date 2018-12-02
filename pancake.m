@@ -1,10 +1,10 @@
-function [pt_array] = pancake(x, y, theta, x_d, y_d, theta_d)
+function [pt_array] = pancake(x, y, theta, x_d, y_d, theta_d, pk_l, pk_m)
 
     % gravitational constant
     g = 9.81;
-    m = 0.01;
+    m = pk_m;
     % pancake is 0.01m
-    L = 0.5;
+    L = pk_l;
     theta_dd = 0;
     Izz = 0.666667*m*L^2;
     % damping factor
