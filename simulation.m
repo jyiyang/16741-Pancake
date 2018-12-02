@@ -22,6 +22,7 @@ for i = 1:size(jt_array, 1)
         hold on;
         xlim([-1, 4]);
         ylim([-2, 5]);
+        view(-175, -45);
         [x, y, z] = sphere();
         surf(x * r + jt1(1), y * r + jt1(2), z * r, 'EdgeColor', 'g', 'FaceColor', 'g');
         surf(x * r + jt2(1), y * r + jt2(2), z * r, 'EdgeColor', 'g', 'FaceColor', 'g');
@@ -79,6 +80,7 @@ for i = 1:size(pc_point_array, 1)
         hold on;
         xlim([-1, 4]);
         ylim([-2, 5]);
+        view(-175, -45);
         [x, y, z] = sphere();
         surf(x * r + jt1(1), y * r + jt1(2), z * r, 'EdgeColor', 'g', 'FaceColor', 'g');
         surf(x * r + jt2(1), y * r + jt2(2), z * r, 'EdgeColor', 'g', 'FaceColor', 'g');
